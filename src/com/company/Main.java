@@ -9,10 +9,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class Main {
     public static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MMM-yy");
+    private final static Logger logger = Logger.getLogger(Main.class.getName());
     public static void main(String[] args) {
         File csvFile = new File("C:\\Users\\hp\\Downloads\\netflix_title.csv");
         Scanner sc = new Scanner(System.in);
@@ -21,7 +25,7 @@ public class Main {
         System.out.println(startDate+" "+endDate);
         if(csvFile.exists() && csvFile.isFile()){
             List<NetflixMovie> netflixMovies = convertCSVToList(csvFile);
-            System.out.println("File read! Enter the number of records (n): ");
+            logger.info("File read! Enter the number of records (n): ");
             int n = sc.nextInt();
 
             //TV Shows List
@@ -29,33 +33,34 @@ public class Main {
             List<NetflixMovie> movieTypeList = netflixMovies.stream().filter(movie -> movie.getDateAdded()!= null && movie.getDateAdded().isAfter(startDate) && movie.getDateAdded().isBefore(endDate))
                     .filter(movie -> movie.getType().equals("TV Show")).limit(n).collect(Collectors.toList());
             long end = System.currentTimeMillis();
-            System.out.println(n+" records with type : TV Show");
-            System.out.println(movieTypeList.toString());
-            System.out.println("Time taken : "+(end-start)+" milli seconds!");
+            logger.info(n+" records with type : TV Show");
+            logger.info(movieTypeList.toString());
+            logger.info("Time taken : "+(end-start)+" milli seconds!");
 
             // Horror Movies List
             start = System.currentTimeMillis();
             List<NetflixMovie> listingList = netflixMovies.stream().filter(movie -> movie.getDateAdded()!= null && movie.getDateAdded().isAfter(startDate) && movie.getDateAdded().isBefore(endDate))
             .filter(movie -> movie.getListedIn().contains("Horror Movies")).limit(n).collect(Collectors.toList());
             end=System.currentTimeMillis();
-            System.out.println(n+" records with listing as Horror Movies");
-            System.out.println(listingList.toString());
-            System.out.println("Time taken : "+(end-start)+" milli seconds!");
+            logger.info(n+" records with listing as Horror Movies");
+            logger.info(listingList.toString());
+            logger.info("Time taken : "+(end-start)+" milli seconds!");
 
             //Indian Movies List
             start= System.currentTimeMillis();
             List<NetflixMovie> indianMoviesList = netflixMovies.stream().filter(movie -> movie.getDateAdded()!= null && movie.getDateAdded().isAfter(startDate) && movie.getDateAdded().isBefore(endDate))
                     .filter(movie -> movie.getType().equals("Movie") && movie.getCountry().equals("India")).limit(n).collect(Collectors.toList());
             end=System.currentTimeMillis();
-            System.out.println(n+" records showing Indian Movies");
-            System.out.println(indianMoviesList.toString());
-            System.out.println("Time taken : "+(end-start)+" milli seconds!");
+            logger.info(n+" records showing Indian Movies");
+            logger.info(indianMoviesList.toString());
+            logger.info("Time taken : "+(end-start)+" milli seconds!");
 
             //list.stream().map(movie -> movie.getDateAdded()).sorted((m1,m2) -> m1.compareTo(m2)).forEach(System.out::println);
 
         }
         else{
-            System.out.println("Can't read the file!");
+            //logger.error("Can't read the file!");
+            logger.log(Level.parse("error"),"Can't read the file!");
         }
     }
 
